@@ -1,23 +1,80 @@
-const songName = document.getElementById("song-name")
-const audio = document.getElementById("audio")
-const playPause = document.getElementById("play-pause")
+const songName = document.getElementById("song-name");
+const artistName = document.getElementById("artist-name");
+const albumArt = document.getElementById("album-art");
+const audio = document.getElementById("audio");
+const playPause = document.getElementById("play-pause");
+const previous = document.getElementById("previous");
+const next = document.getElementById("next");
 
-songName.innerText = "ชีวิตไม่พร้อม แต่หัวใจพร้อม"
+const music00 = {
+    songName: 'ชีวิตไม่พร้อม แต่หัวใจพร้อม',
+    artistName: 'เสถียร ทำมือ',
+    albumArt: '/image/album_00.png',
+    audio: '/music/เสถียร ทำมือ - ชีวิตไม่พร้อม แต่หัวใจพร้อม.mp3'
+}
+
+const music01 = {
+    songName: 'เจ็บเมื่อไหร่ก็โทรมา',
+    artistName: 'เสถียร ทำมือ',
+    albumArt: '/image/album_01.png',
+    audio: '/music/เจ็บเมื่อไหร่ก็โทรมา - เสถียร ทำมือ-OFFICIAL MV.mp3'
+}
+
+const music02 = {
+    songName: 'ทุกที่ก็ทุกที',
+    artistName: 'เสถียร ทำมือ',
+    albumArt: '/image/album_02.png',
+    audio: '/music/ทุกที่ก็ทุกที - Satien Tummue.mp3'
+}
+
+const playlist = [music00, music01, music02];
+let index = 0;
 
 function playMusic() {
-    audio.play()
-    playPause.innerHTML = "<i class='bi bi-pause-circle-fill'></i>"
+    audio.play();
+    // Seleciona o ícone (i) que está dentro do botão (playPause)
+    const icon = playPause.querySelector('i');
+    icon.classList.remove('bi-play-circle-fill');
+    icon.classList.add('bi-pause-circle-fill');
 }
 
 function pauseMusic() {
-    audio.pause()
-    playPause.innerHTML = "<i class='bi bi-play-circle-fill'></i>"
+    audio.pause();
+    // Inverso para voltar ao ícone de Play
+    const icon = playPause.querySelector('i');
+    icon.classList.remove('bi-pause-circle-fill');
+    icon.classList.add('bi-play-circle-fill');
 }
 
-playPause.addEventListener("click", () => {
+function loadMusic() {
+    albumArt.src = playlist[index].albumArt;
+    audio.src = playlist[index].audio;
+    songName.textContent = playlist[index].songName;
+    artistName.textContent = playlist[index].artistName;
+}
+
+playPause.addEventListener('click', () => {
     if (audio.paused) {
-        playMusic()
+        playMusic();
     } else {
-        pauseMusic()
+        pauseMusic();
     }
-})
+});
+
+previous.addEventListener('click', () => {
+    if (index > 0) {
+        index--;
+        loadMusic();
+        playMusic();
+    }
+});
+
+next.addEventListener('click', () => {
+    if (index < playlist.length - 1) {
+        index++;
+        loadMusic();
+        playMusic();
+    }
+});
+
+loadMusic();

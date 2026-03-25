@@ -1,0 +1,8 @@
+# Cache e arquivos de sistema
+.uv/
+.python-version
+.DS_Store
+Thumbs.db
+
+# Histórico de specs (se quiser manter só local)
+history/
