@@ -12,6 +12,12 @@ body {
     align-items: center;
 }
 
+button {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+}
+
 #album-art {
     width: 450px;
     height: 100%;
