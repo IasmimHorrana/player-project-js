@@ -5,6 +5,8 @@ const audio = document.getElementById("audio");
 const playPause = document.getElementById("play-pause");
 const previous = document.getElementById("previous");
 const next = document.getElementById("next");
+const currentProgress = document.getElementById("current-progress");
+const progressContainer = document.getElementById("progress-container");
 
 const music00 = {
     songName: 'ชีวิตไม่พร้อม แต่หัวใจพร้อม',
@@ -53,6 +55,19 @@ function loadMusic() {
     artistName.textContent = playlist[index].artistName;
 }
 
+function updateProgress() {
+    const barWidth = (audio.currentTime / audio.duration) * 100;
+    currentProgress.style.setProperty('--progress', `${barWidth}%`);
+}
+
+function jumpto(event) {
+    const rect = progressContainer.getBoundingClientRect();
+    const width = rect.width;
+    const x = event.clientX - rect.left;
+    const newTime = (x / width) * audio.duration;
+    audio.currentTime = newTime;
+}
+
 playPause.addEventListener('click', () => {
     if (audio.paused) {
         playMusic();
@@ -76,5 +91,11 @@ next.addEventListener('click', () => {
         playMusic();
     }
 });
+
+audio.addEventListener('timeupdate', () => {
+    updateProgress();
+});
+
+progressContainer.addEventListener('click', jumpto);
 
 loadMusic();
