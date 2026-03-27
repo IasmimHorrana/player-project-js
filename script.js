@@ -7,6 +7,9 @@ const previous = document.getElementById("previous");
 const next = document.getElementById("next");
 const currentProgress = document.getElementById("current-progress");
 const progressContainer = document.getElementById("progress-container");
+const isShuffle = document.getElementById("shuffle");
+const repeat = document.getElementById("repeat");
+const like = document.getElementById("like");
 
 const music00 = {
     songName: 'ชีวิตไม่พร้อม แต่หัวใจพร้อม',
@@ -29,8 +32,10 @@ const music02 = {
     audio: '/music/ทุกที่ก็ทุกที - Satien Tummue.mp3'
 }
 
-const playlist = [music00, music01, music02];
+const originalPlaylist = [music00, music01, music02];
+let sortedPlaylist = [...originalPlaylist];
 let index = 0;
+let shuffle = false;
 
 function playMusic() {
     audio.play();
@@ -49,10 +54,10 @@ function pauseMusic() {
 }
 
 function loadMusic() {
-    albumArt.src = playlist[index].albumArt;
-    audio.src = playlist[index].audio;
-    songName.textContent = playlist[index].songName;
-    artistName.textContent = playlist[index].artistName;
+    albumArt.src = sortedPlaylist[index].albumArt;
+    audio.src = sortedPlaylist[index].audio;
+    songName.textContent = sortedPlaylist[index].songName;
+    artistName.textContent = sortedPlaylist[index].artistName;
 }
 
 function updateProgress() {
@@ -68,6 +73,26 @@ function jumpto(event) {
     audio.currentTime = newTime;
 }
 
+function shuffleArray() {
+    const size = sortedPlaylist.length;
+    for (let i = size - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [sortedPlaylist[i], sortedPlaylist[j]] = [sortedPlaylist[j], sortedPlaylist[i]];
+    }
+}
+
+function shuffebutton() {
+    if (shuffle === false) {
+        shuffle = true;
+        shuffleArray();
+        isShuffle.style.color = "#1db954";
+    } else {
+        shuffle = false;
+        sortedPlaylist = [...originalPlaylist];
+        isShuffle.style.color = "inherit";
+    }
+}
+
 playPause.addEventListener('click', () => {
     if (audio.paused) {
         playMusic();
@@ -77,19 +102,25 @@ playPause.addEventListener('click', () => {
 });
 
 previous.addEventListener('click', () => {
-    if (index > 0) {
+    if (index === 0) {
+        index = sortedPlaylist.length - 1;
+    } else {
         index--;
-        loadMusic();
-        playMusic();
     }
+
+    loadMusic();
+    playMusic();
 });
 
 next.addEventListener('click', () => {
-    if (index < playlist.length - 1) {
+    if (index === sortedPlaylist.length - 1) {
+        index = 0;
+    } else {
         index++;
-        loadMusic();
-        playMusic();
     }
+
+    loadMusic();
+    playMusic();
 });
 
 audio.addEventListener('timeupdate', () => {
@@ -97,5 +128,7 @@ audio.addEventListener('timeupdate', () => {
 });
 
 progressContainer.addEventListener('click', jumpto);
+
+isShuffle.addEventListener('click', shuffebutton);
 
 loadMusic();
