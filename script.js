@@ -8,8 +8,10 @@ const next = document.getElementById("next");
 const currentProgress = document.getElementById("current-progress");
 const progressContainer = document.getElementById("progress-container");
 const isShuffle = document.getElementById("shuffle");
-const repeat = document.getElementById("repeat");
+const repeatButton = document.getElementById("repeat");
 const like = document.getElementById("like");
+const currentTime = document.getElementById("current-time");
+const duration = document.getElementById("duration");
 
 const music00 = {
     songName: 'ชีวิตไม่พร้อม แต่หัวใจพร้อม',
@@ -36,6 +38,7 @@ const originalPlaylist = [music00, music01, music02];
 let sortedPlaylist = [...originalPlaylist];
 let index = 0;
 let shuffle = false;
+let repeatOn = false;
 
 function playMusic() {
     audio.play();
@@ -93,6 +96,54 @@ function shuffebutton() {
     }
 }
 
+function toggleRepeat() {
+    if (repeatOn === false) {
+        repeatOn = true;
+        repeatButton.style.color = "#1db954";
+    } else {
+        repeatOn = false;
+        repeatButton.style.color = "inherit";
+    }
+}
+
+function nextOrRepeat() {
+    if (repeatOn) {
+        audio.currentTime = 0;
+        playMusic();
+    } else {
+        if (index === sortedPlaylist.length - 1) {
+            index = 0;
+        } else {
+            index++;
+        }
+        loadMusic();
+        playMusic();
+    }
+}
+
+function updateCurrentTime() {
+    currentTime.innerText = toHHMMSS(audio.currentTime);
+}
+
+function updateTotalTime() {
+    duration.textContent = toHHMMSS(audio.duration);
+}
+
+function toHHMMSS(originalTime) {
+    const hours = Math.floor(originalTime / 3600);
+    const minutes = Math.floor((originalTime % 3600) / 60);
+    const secs = Math.floor(originalTime % 60);
+
+    const formattedSecs = secs.toString().padStart(2, '0');
+
+    if (hours > 0) {
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        return `${hours}:${formattedMinutes}:${formattedSecs}`;
+    } else {
+        return `${minutes}:${formattedSecs}`;
+    }
+}
+
 playPause.addEventListener('click', () => {
     if (audio.paused) {
         playMusic();
@@ -128,7 +179,10 @@ audio.addEventListener('timeupdate', () => {
 });
 
 progressContainer.addEventListener('click', jumpto);
-
 isShuffle.addEventListener('click', shuffebutton);
+repeatButton.addEventListener('click', toggleRepeat);
+audio.addEventListener('ended', nextOrRepeat);
+audio.addEventListener('timeupdate', updateCurrentTime);
+audio.addEventListener('loadedmetadata', updateTotalTime);
 
 loadMusic();
