@@ -9,7 +9,7 @@ const currentProgress = document.getElementById("current-progress");
 const progressContainer = document.getElementById("progress-container");
 const isShuffle = document.getElementById("shuffle");
 const repeatButton = document.getElementById("repeat");
-const like = document.getElementById("like");
+const likeButton = document.getElementById("like");
 const currentTime = document.getElementById("current-time");
 const duration = document.getElementById("duration");
 
@@ -17,21 +17,24 @@ const music00 = {
     songName: 'ชีวิตไม่พร้อม แต่หัวใจพร้อม',
     artistName: 'เสถียร ทำมือ',
     albumArt: '/image/album_00.png',
-    audio: '/music/เสถียร ทำมือ - ชีวิตไม่พร้อม แต่หัวใจพร้อม.mp3'
+    audio: '/music/เสถียร ทำมือ - ชีวิตไม่พร้อม แต่หัวใจพร้อม.mp3',
+    liked: false
 }
 
 const music01 = {
     songName: 'เจ็บเมื่อไหร่ก็โทรมา',
     artistName: 'เสถียร ทำมือ',
     albumArt: '/image/album_01.png',
-    audio: '/music/เจ็บเมื่อไหร่ก็โทรมา - เสถียร ทำมือ-OFFICIAL MV.mp3'
+    audio: '/music/เจ็บเมื่อไหร่ก็โทรมา - เสถียร ทำมือ-OFFICIAL MV.mp3',
+    liked: false
 }
 
 const music02 = {
     songName: 'ทุกที่ก็ทุกที',
     artistName: 'เสถียร ทำมือ',
     albumArt: '/image/album_02.png',
-    audio: '/music/ทุกที่ก็ทุกที - Satien Tummue.mp3'
+    audio: '/music/ทุกที่ก็ทุกที - Satien Tummue.mp3',
+    liked: false
 }
 
 const originalPlaylist = [music00, music01, music02];
@@ -61,6 +64,7 @@ function loadMusic() {
     audio.src = sortedPlaylist[index].audio;
     songName.textContent = sortedPlaylist[index].songName;
     artistName.textContent = sortedPlaylist[index].artistName;
+    updateLikeButton();
 }
 
 function updateProgress() {
@@ -144,6 +148,23 @@ function toHHMMSS(originalTime) {
     }
 }
 
+function updateLikeButton() {
+    if (sortedPlaylist[index].liked === true) {
+        likeButton.querySelector('i').classList.remove('bi-hand-thumbs-up');
+        likeButton.querySelector('i').classList.add('bi-hand-thumbs-up-fill');
+        likeButton.style.color = "#1db954";
+    } else {
+        likeButton.querySelector('i').classList.remove('bi-hand-thumbs-up-fill');
+        likeButton.querySelector('i').classList.add('bi-hand-thumbs-up');
+        likeButton.style.color = "inherit";
+    }
+}
+
+function LikeButtonClicked() {
+    sortedPlaylist[index].liked = !sortedPlaylist[index].liked;
+    updateLikeButton();
+}
+
 playPause.addEventListener('click', () => {
     if (audio.paused) {
         playMusic();
@@ -184,5 +205,6 @@ repeatButton.addEventListener('click', toggleRepeat);
 audio.addEventListener('ended', nextOrRepeat);
 audio.addEventListener('timeupdate', updateCurrentTime);
 audio.addEventListener('loadedmetadata', updateTotalTime);
+likeButton.addEventListener('click', LikeButtonClicked);
 
 loadMusic();
